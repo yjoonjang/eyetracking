@@ -53,21 +53,25 @@ while True:
             print("Initial eye level set:", initial_eye_level)
 
         # 시선이 10cm 높아졌는지 확인
-        elif eye_level > initial_eye_level + 10:
-            count += 1
-            if count >= 90:  # 3초간 유지
-                final_eye_level = eye_level
-                print("Final eye level set:", final_eye_level)
-                break
+        # elif eye_level > initial_eye_level + 10:
+        #     count += 1
+        #     if count >= 90:  # 3초간 유지
+        #         final_eye_level = eye_level
+        #         print("Final eye level set:", final_eye_level)
+        #         break
 
         # 실시간으로 높이 조정
-        # 여기에 높이 조정 로직을 추가하세요 (예: 아두이노에 신호 전송)
 
     cv2.imshow("Frame", frame)
     key = cv2.waitKey(1) & 0xFF
     if key == ord("f"):
         final_eye_level = eye_level
         print("Eye level fixed at:", final_eye_level)
+        target_height = final_eye_level - 10
+
+        # TODO target_height를 이용해서 아두이노에 전달하는 로직
+        # TODO 모터의 rpm 고려하여 height를 기반으로 회전량 계산
+
     if key == ord("q"):
         break
 
