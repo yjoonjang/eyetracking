@@ -48,7 +48,8 @@ while True:
                     cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
 
         # 초기 눈 높이 측정
-        if initial_eye_level is None:
+        key = cv2.waitKey(1) & 0xFF
+        if (initial_eye_level is None) and (key == ord("s")):
             initial_eye_level = eye_level
             print("Initial eye level set:", initial_eye_level)
 
