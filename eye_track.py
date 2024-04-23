@@ -6,10 +6,9 @@ from imutils import face_utils
 import serial
 import time
 
-# TODO 시리얼 포트 연결 설정 -> 포트 조정 필요
-ser = serial.Serial('COM3', 9600)  # Windows 예시, 포트는 확인 후 변경
+# TODO 시리얼 포트 연결 설정 -> USB 케이블 연결 후 포트 조정 필요. 일반적으로는 cu를 더 많이 사용
+ser = serial.Serial('/dev/tty.Bluetooth-Incoming-Port', 9600)
 time.sleep(2)  # 아두이노 리셋 후 데이터 손실 방지를 위해 대기
-
 
 def get_eye_level(frame, detector, predictor):
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
@@ -23,15 +22,14 @@ def get_eye_level(frame, detector, predictor):
         leftEye = shape[36:42]
         rightEye = shape[42:48]
 
-        # 눈의 중심 높이를 계산합니다.
+        # 눈의 중심 높이를 계산
         leftEyeHeight = (leftEye[1][1] + leftEye[5][1]) / 2
         rightEyeHeight = (rightEye[1][1] + rightEye[5][1]) / 2
 
-        # 두 눈의 평균 높이를 반환합니다.
+        # 두 눈의 평균 높이를 반환
         return (leftEyeHeight + rightEyeHeight) / 2
 
 
-# 얼굴 감지기 및 랜드마크 예측기 초기화
 detector = dlib.get_frontal_face_detector()
 predictor = dlib.shape_predictor("lib/shape_predictor_68_face_landmarks.dat")
 
