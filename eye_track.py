@@ -6,9 +6,8 @@ from imutils import face_utils
 import serial
 import time
 
-# TODO 시리얼 포트 연결 설정 -> USB 케이블 연결 후 포트 조정 필요. 일반적으로는 cu를 더 많이 사용
-ser = serial.Serial('/dev/tty.Bluetooth-Incoming-Port', 9600)
-time.sleep(2)  # 아두이노 리셋 후 데이터 손실 방지를 위해 대기
+ser = serial.Serial('/dev/tty.usbserial-10', 9600)
+time.sleep(1)  # 아두이노 리셋 후 데이터 손실 방지를 위해 대기
 
 def get_eye_level(frame, detector, predictor):
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
@@ -52,22 +51,21 @@ while True:
         cv2.putText(frame, f"Eye Level: {eye_level:.2f}", (10, 30),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
 
-        # 초기 눈 높이 측정
-        key = cv2.waitKey(1) & 0xFF
-        if (initial_eye_level is None) and (key == ord("s")):
-            initial_eye_level = eye_level
-            print("Initial eye level set:", initial_eye_level)
-
     cv2.imshow("Frame", frame)
     key = cv2.waitKey(1) & 0xFF
-    if eye_level and key == ord("f"):
-        final_eye_level = eye_level
-        print("Eye level fixed at:", final_eye_level)
-        target_height = final_eye_level - 10
-        ser.write(f"{target_height}\n".encode())
 
-        # TODO target_height를 이용해서 아두이노에 전달하는 로직
-        # TODO 모터의 rpm 고려하여 height를 기반으로 회전량 계산
+    if key == ord("s"):
+        initial_eye_level = eye_level
+        print("Initial eye level set:", initial_eye_level)
+
+    elif key == ord("f") and initial_eye_level is not None:
+        final_eye_level = eye_level
+        print("Final eye level set:", final_eye_level)
+        if final_eye_level:
+            target_height = abs(int(final_eye_level - initial_eye_level))
+            ser.write(f"{target_height}\n".encode())
+            time.sleep(1)
+            print(f"Sent target height: {target_height} to Arduino")
 
     if key == ord("q"):
         break
