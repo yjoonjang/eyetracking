@@ -33,7 +33,7 @@ detector = dlib.get_frontal_face_detector()
 predictor = dlib.shape_predictor("lib/shape_predictor_68_face_landmarks.dat")
 
 # 웹캠 초기화
-cap = cv2.VideoCapture(1)
+cap = cv2.VideoCapture(0)
 
 initial_eye_level = None
 final_eye_level = None
