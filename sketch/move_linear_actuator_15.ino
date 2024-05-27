@@ -33,48 +33,50 @@
 MAS001 myShield;
 DMD150 myMotor;
 
-const int maxPosition = 1023;  // 최대 위치 (Potentiometer의 최대 값)
+const int maxPosition = 10;  // 최대 위치 (Potentiometer의 최대 값)
 const int minPosition = 0;     // 최소 위치 (Potentiometer의 최소 값)
 int currentPosition = 0;       // 현재 위치
 int targetPosition = maxPosition;  // 목표 위치
 int spd = 100;  // 기본 속도 설정
+bool moveToTarget = false;  // 목표 위치로 이동 플래그
+const int threshold = 1;  // 목표 위치 근처에서 멈추기 위한 오차 범위
 
 void setup() {
-    // 초기 설정이 필요하면 여기에 추가
     Serial.begin(9600);
+    Serial.println("Setup completed");
 }
 
 void loop() {
     if (Serial.available() > 0) {
         String input = Serial.readStringUntil('\n');
         int newPosition = input.toInt(); // 문자열을 정수로 변환
-        if (newPosition >= minPosition && newPosition <= maxPosition) {
-            targetPosition = newPosition; // 유효한 범위 내의 경우 목표 위치로 설정
+        if (newPosition >= minPosition) {
+            targetPosition = newPosition;
+            moveToTarget = true; // 목표 위치로 이동하도록 설정
+            Serial.print("Received new target position: ");
+            Serial.println(targetPosition);
         }
     }
 
-    if (myShield.button1Clicked()) {
-        targetPosition = maxPosition;  // 버튼 클릭 시 목표 위치를 최대값으로 설정
-    } else if (myShield.button2Clicked()) {
-        targetPosition = minPosition;  // 버튼2 클릭 시 목표 위치를 최소값으로 설정
+    if (moveToTarget) {
+        currentPosition = myShield.getPot();
+        Serial.print("Current Position: ");
+        Serial.print(currentPosition);
+        Serial.print(" Target Position: ");
+        Serial.println(targetPosition);
+
+        if (currentPosition < targetPosition) {
+            spd = map(targetPosition - currentPosition, 0, maxPosition, 0, 255);
+            myMotor.rotation(spd);
+        } else if (currentPosition > targetPosition) {
+            spd = map(currentPosition - targetPosition, 0, maxPosition, 0, -255);
+            myMotor.rotation(spd);
+        } else {
+            myMotor.floating();  // 목표 위치에 도달하면 멈춤
+            moveToTarget = false; // 목표 위치로 이동 완료
+            Serial.println("Reached target position");
+        }
+
+        delay(100);  // 필요에 따라 딜레이 시간을 조절
     }
-
-    currentPosition = myShield.getPot();  // 현재 위치를 Potentiometer에서 읽기
-
-    if (currentPosition < targetPosition) {
-        spd = map(targetPosition - currentPosition, 0, maxPosition, 0, 255);
-        myMotor.rotation(spd);
-    } else if (currentPosition > targetPosition) {
-        spd = map(currentPosition - targetPosition, 0, maxPosition, 0, -255);
-        myMotor.rotation(spd);
-    } else {
-        myMotor.floating();  // 목표 위치에 도달하면 멈춤
-    }
-
-    // 상태 출력
-    Serial.print("Current Position: ");
-    Serial.print(currentPosition);
-    Serial.print(" Target Position: ");
-    Serial.println(targetPosition);
-    delay(100);  // 필요에 따라 딜레이 시간을 조절
 }

@@ -33,7 +33,7 @@ detector = dlib.get_frontal_face_detector()
 predictor = dlib.shape_predictor("lib/shape_predictor_68_face_landmarks.dat")
 
 # 웹캠 초기화
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(1)
 
 initial_eye_level = None
 final_eye_level = None
@@ -58,14 +58,29 @@ while True:
         initial_eye_level = eye_level
         print("Initial eye level set:", initial_eye_level)
 
+
     elif key == ord("f") and initial_eye_level is not None:
+
         final_eye_level = eye_level
+
         print("Final eye level set:", final_eye_level)
+
         if final_eye_level:
+
             target_height = abs(int(final_eye_level - initial_eye_level))
+
             ser.write(f"{target_height}\n".encode())
+
             time.sleep(1)
+
             print(f"Sent target height: {target_height} to Arduino")
+
+            # 아두이노로부터의 응답 읽기
+
+            while ser.in_waiting > 0:
+                response = ser.readline().decode().strip()
+
+                print(f"Arduino response: {response}")
 
     if key == ord("q"):
         break
