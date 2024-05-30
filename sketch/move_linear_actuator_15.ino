@@ -59,24 +59,15 @@ void loop() {
     }
 
     if (moveToTarget) {
-        currentPosition = myShield.getPot();
-        Serial.print("Current Position: ");
-        Serial.print(currentPosition);
         Serial.print(" Target Position: ");
         Serial.println(targetPosition);
 
-        if (currentPosition < targetPosition) {
-            spd = map(targetPosition - currentPosition, 0, maxPosition, 0, 255);
-            myMotor.rotation(spd);
-        } else if (currentPosition > targetPosition) {
-            spd = map(currentPosition - targetPosition, 0, maxPosition, 0, -255);
-            myMotor.rotation(spd);
-        } else {
-            myMotor.floating();  // 목표 위치에 도달하면 멈춤
-            moveToTarget = false; // 목표 위치로 이동 완료
-            Serial.println("Reached target position");
-        }
-
-        delay(100);  // 필요에 따라 딜레이 시간을 조절
+        spd=-255;
+        Serial.println(targetPosition);
+        myMotor.rotation(spd);
+        int rotate_time = targetPosition * 1000 / 0.5;
+        delay(rotate_time);
+        myMotor.brake();
+        moveToTarget=false;
     }
 }
