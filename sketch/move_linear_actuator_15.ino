@@ -47,21 +47,24 @@ void setup() {
 }
 
 void loop() {
-  // 초기화하는 명령어
-    // spd=255;
-    // myMotor.rotation(spd);
-    // delay(100000);
-    // myMotor.brake();
-    // 5-6cm 정도는 여유 있어야함
 
-    if (Serial.available() > 0) {
+   if (Serial.available() > 0) {
         String input = Serial.readStringUntil('\n');
-        int newPosition = input.toInt(); // 문자열을 정수로 변환
-        if (newPosition >= minPosition) {
-            targetPosition = newPosition;
-            moveToTarget = true; // 목표 위치로 이동하도록 설정
-            Serial.print("Received new target position: ");
-            Serial.println(targetPosition);
+        input.trim(); // 양 끝 공백 제거
+
+        if (input.startsWith("init")) {
+            Serial.println("Received initialization command");
+            input.remove(0, 4); // "init"을 제거하고 나머지 값만 남김
+            int initPosition = input.toInt();
+            initializeSystem(initPosition);
+        } else {
+            int newPosition = input.toInt(); // 문자열을 정수로 변환
+            if (newPosition >= minPosition && newPosition <= maxPosition) {
+                targetPosition = newPosition;
+                moveToTarget = true; // 목표 위치로 이동하도록 설정
+                Serial.print("Received new target position: ");
+                Serial.println(targetPosition);
+            }
         }
     }
 
@@ -77,4 +80,13 @@ void loop() {
         myMotor.brake();
         moveToTarget=false;
     }
+}
+
+void initializeSystem(targetPosition) {
+    spd = 255;
+    myMotor.rotation(spd);
+    int rotate_time = (targetPosition-5) * 1000 / 0.6
+    delay(rotate_time);
+    myMotor.brake();
+    Serial.println("Initialization completed");
 }

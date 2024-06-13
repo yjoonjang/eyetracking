@@ -82,6 +82,12 @@ while True:
 
                 print(f"Arduino response: {response}")
 
+
+
+    elif key == ord("i"):
+        ser.write(f"init{final_eye_level}\n".encode())
+        print("Sent initialization command to Arduino with final eye level")
+
     if key == ord("q"):
         break
 
