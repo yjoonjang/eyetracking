@@ -6,7 +6,7 @@ from imutils import face_utils
 import serial
 import time
 
-ser = serial.Serial('/dev/tty.usbserial-10', 9600)
+ser = serial.Serial('/dev/cu.usbserial-110', 9600)
 time.sleep(1)  # 아두이노 리셋 후 데이터 손실 방지를 위해 대기
 
 def get_eye_level(frame, detector, predictor):
@@ -33,7 +33,7 @@ detector = dlib.get_frontal_face_detector()
 predictor = dlib.shape_predictor("lib/shape_predictor_68_face_landmarks.dat")
 
 # 웹캠 초기화
-cap = cv2.VideoCapture(1)
+cap = cv2.VideoCapture(0)
 
 initial_eye_level = None
 final_eye_level = None

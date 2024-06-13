@@ -47,6 +47,13 @@ void setup() {
 }
 
 void loop() {
+  // 초기화하는 명령어
+    // spd=255;
+    // myMotor.rotation(spd);
+    // delay(100000);
+    // myMotor.brake();
+    // 5-6cm 정도는 여유 있어야함
+
     if (Serial.available() > 0) {
         String input = Serial.readStringUntil('\n');
         int newPosition = input.toInt(); // 문자열을 정수로 변환
@@ -65,7 +72,7 @@ void loop() {
         spd=-255;
         Serial.println(targetPosition);
         myMotor.rotation(spd);
-        int rotate_time = targetPosition * 1000 / 0.5;
+        int rotate_time = targetPosition * 1000 / 0.6;
         delay(rotate_time);
         myMotor.brake();
         moveToTarget=false;
