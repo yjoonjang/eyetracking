@@ -47,10 +47,25 @@ void setup() {
 }
 
 void loop() {
+  // spd=255;
+  // myMotor.rotation(spd);
+  // delay(500);
+  // myMotor.brake();
+  //  if (Serial.available() > 0) {
+  //       String input = Serial.readStringUntil('\n');
+  //       int newPosition = input.toInt(); // 문자열을 정수로 변환
+  //       if (newPosition >= minPosition) {
+  //           targetPosition = newPosition;
+  //           moveToTarget = true; // 목표 위치로 이동하도록 설정
+  //           Serial.print("Received new target position: ");
+  //           Serial.println(targetPosition);
+  //         } 
+  //     }
 
    if (Serial.available() > 0) {
         String input = Serial.readStringUntil('\n');
-        input.trim(); // 양 끝 공백 제거
+        // Serial.print(input);
+        // input.trim(); // 양 끝 공백 제거
 
         if (input.startsWith("init")) {
             Serial.println("Received initialization command");
@@ -59,7 +74,7 @@ void loop() {
             initializeSystem(initPosition);
         } else {
             int newPosition = input.toInt(); // 문자열을 정수로 변환
-            if (newPosition >= minPosition && newPosition <= maxPosition) {
+            if (newPosition >= minPosition) {
                 targetPosition = newPosition;
                 moveToTarget = true; // 목표 위치로 이동하도록 설정
                 Serial.print("Received new target position: ");
@@ -72,7 +87,7 @@ void loop() {
         Serial.print(" Target Position: ");
         Serial.println(targetPosition);
 
-        spd=-255;
+        spd = 255;
         Serial.println(targetPosition);
         myMotor.rotation(spd);
         int rotate_time = targetPosition * 1000 / 0.6;
@@ -82,10 +97,10 @@ void loop() {
     }
 }
 
-void initializeSystem(targetPosition) {
-    spd = 255;
+void initializeSystem(int targetPosition) {
+    spd = -255;
     myMotor.rotation(spd);
-    int rotate_time = (targetPosition-5) * 1000 / 0.6
+    int rotate_time = (targetPosition-5) * 1000 / 0.6;
     delay(rotate_time);
     myMotor.brake();
     Serial.println("Initialization completed");

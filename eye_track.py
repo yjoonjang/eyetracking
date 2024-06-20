@@ -37,6 +37,7 @@ cap = cv2.VideoCapture(0)
 
 initial_eye_level = None
 final_eye_level = None
+target_height = None
 count = 0
 
 while True:
@@ -85,8 +86,8 @@ while True:
 
 
     elif key == ord("i"):
-        ser.write(f"init{final_eye_level}\n".encode())
-        print("Sent initialization command to Arduino with final eye level")
+        ser.write(f"init{target_height}\n".encode())
+        print("Sent initialization command to Arduino with target_height")
 
     if key == ord("q"):
         break
