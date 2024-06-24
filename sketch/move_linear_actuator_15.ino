@@ -87,10 +87,10 @@ void loop() {
         Serial.print(" Target Position: ");
         Serial.println(targetPosition);
 
-        spd = 255;
+        spd = -255;
         Serial.println(targetPosition);
         myMotor.rotation(spd);
-        int rotate_time = targetPosition * 1000 / 0.6;
+        int rotate_time = targetPosition * 1000 / 0.5;
         delay(rotate_time);
         myMotor.brake();
         moveToTarget=false;
@@ -98,9 +98,9 @@ void loop() {
 }
 
 void initializeSystem(int targetPosition) {
-    spd = -255;
+    spd = 255;
     myMotor.rotation(spd);
-    int rotate_time = (targetPosition-5) * 1000 / 0.6;
+    int rotate_time = (targetPosition-4) * 1000 / 0.6;
     delay(rotate_time);
     myMotor.brake();
     Serial.println("Initialization completed");
